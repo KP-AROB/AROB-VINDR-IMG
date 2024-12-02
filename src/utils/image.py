@@ -12,7 +12,7 @@ def load_dicom_image(path):
     if ds.PhotometricInterpretation == "MONOCHROME1":
         img2d = np.amax(img2d) - img2d
 
-    img2d = img2d.astype(np.float32)
+    img2d = cv2.normalize(img2d, None, 0, 255, cv2.NORM_MINMAX).astype('uint8')
     return img2d
 
 
