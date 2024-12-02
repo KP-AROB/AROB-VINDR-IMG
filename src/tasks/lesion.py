@@ -21,7 +21,7 @@ def prepare_row(row, data_dir: str, out_dir: str, img_size: int):
     return
 
 
-def prepare_lesion_dataset(data_dir: str, out_dir: str, img_size: int):
+def prepare_lesion_dataset(data_dir: str, out_dir: str, img_size: int, class_list: list):
     """Prepare the VINDR MAMMO dataset for lesion specific classification
 
     Args:
@@ -30,7 +30,6 @@ def prepare_lesion_dataset(data_dir: str, out_dir: str, img_size: int):
         img_size (int): New image size
         severity (bool): Whether to create classes for pathologies or not
     """
-    class_list = ['no_finding', 'suspicious_calcification', 'mass']
     train_df = prepare_vindr_dataframe(data_dir, class_list, True)
     test_df = prepare_vindr_dataframe(data_dir, class_list, False)
 
