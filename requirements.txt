@@ -1,0 +1,6 @@
+albumentations==1.4.21
+numpy==1.26.4
+opencv-python==4.10.0.84
+pandas==2.2.3
+pydicom==3.0.1
+tqdm==4.66.6
