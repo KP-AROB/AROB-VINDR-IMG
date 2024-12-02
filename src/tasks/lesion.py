@@ -1,8 +1,6 @@
 import os
 import cv2
-import shutil
 from tqdm import tqdm
-from glob import glob
 from src.utils.image import load_dicom_image
 from concurrent.futures import ProcessPoolExecutor
 from src.utils.dataframe import prepare_vindr_dataframe
@@ -32,7 +30,6 @@ def prepare_lesion_dataset(data_dir: str, out_dir: str, img_size: int):
         img_size (int): New image size
         severity (bool): Whether to create classes for pathologies or not
     """
-    shutil.rmtree(os.path.join(out_dir), ignore_errors=True)
     class_list = ['no_finding', 'suspicious_calcification', 'mass']
     train_df = prepare_vindr_dataframe(data_dir, class_list, True)
     test_df = prepare_vindr_dataframe(data_dir, class_list, False)
