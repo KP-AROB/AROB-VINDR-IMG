@@ -25,9 +25,7 @@ def make_classwise_augmentations(data_dir, n_augment, class_list=['mass', 'suspi
         A.ElasticTransform(alpha=1, sigma=50, p=0.3),
         A.RandomBrightnessContrast(
             brightness_limit=0.2, contrast_limit=0.2, p=0.5),
-        A.GaussNoise(var_limit=(10.0, 50.0), p=0.3),
         A.GaussianBlur(blur_limit=(3, 7), p=0.3),
-        A.RandomGamma(gamma_limit=(80, 120), p=0.4),
     ])
 
     class_dirs = [os.path.join(data_dir, i) for i in class_list]

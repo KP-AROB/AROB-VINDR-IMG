@@ -1,5 +1,6 @@
 import os
 import cv2
+import logging
 from tqdm import tqdm
 from src.utils.image import load_dicom_image
 from concurrent.futures import ProcessPoolExecutor
@@ -7,18 +8,21 @@ from src.utils.dataframe import prepare_vindr_dataframe
 
 
 def prepare_row(row, data_dir: str, out_dir: str, img_size: int):
-    sample_path = os.path.join(
-        data_dir, 'images', row['study_id'], row['image_id'] + '.dicom')
-    original_image = load_dicom_image(sample_path)
-    resized_image = cv2.resize(
-        original_image,
-        (img_size, img_size),
-        interpolation=cv2.INTER_LINEAR,
-    )
-    output_image_path = os.path.join(
-        out_dir, row['finding_categories'], "{}.png".format(row.name))
-    cv2.imwrite(output_image_path, resized_image)
-    return
+    try:
+        sample_path = os.path.join(
+            data_dir, 'images', row['study_id'], row['image_id'] + '.dicom')
+        original_image = load_dicom_image(sample_path)
+        resized_image = cv2.resize(
+            original_image,
+            (img_size, img_size),
+            interpolation=cv2.INTER_LINEAR,
+        )
+        output_image_path = os.path.join(
+            out_dir, row['finding_categories'], "{}.png".format(row.name))
+        cv2.imwrite(output_image_path, resized_image)
+    except Exception as e:
+        img_id = row['image_id']
+        logging.error(f'Failed to process image {img_id}: {e}')
 
 
 def prepare_lesion_dataset(data_dir: str, out_dir: str, img_size: int, class_list: list):

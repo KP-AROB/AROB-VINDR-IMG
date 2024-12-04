@@ -6,7 +6,7 @@ import os
 
 train_folder = '/mnt/d/datasets/vindr-mammo/data/npy/train'
 test_folder = '/mnt/d/datasets/vindr-mammo/data/npy/test'
-out_folder = '/mnt/d/datasets/vindr-mammo/data/prepared'
+out_folder = '/mnt/d/datasets/vindr-mammo/data/raw'
 
 
 train_image_files = glob(train_folder + '/*images*.npy')

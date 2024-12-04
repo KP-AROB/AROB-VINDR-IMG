@@ -34,6 +34,7 @@ if __name__ == "__main__":
     class_list = ['no_finding', 'suspicious_calcification', 'mass']
 
     # PREPARATION
+
     prepare_lesion_dataset(args.data_dir, out_dir, args.img_size, class_list)
 
     if args.n_augment > 0:
