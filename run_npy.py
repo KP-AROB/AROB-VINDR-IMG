@@ -16,7 +16,7 @@ test_image_files = glob(test_folder + '/*images*.npy')
 test_label_files = glob(test_folder + '/*labels*.npy')
 
 classes = ['no_finding', 'suspicious_calcification',
-           'mass', 'suspicious_lymph_node']
+           'mass']
 
 for i in classes:
     os.makedirs(os.path.join(out_folder, 'train', i), exist_ok=True)

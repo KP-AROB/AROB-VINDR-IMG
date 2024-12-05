@@ -11,11 +11,11 @@ if __name__ == "__main__":
         description="Vindr Mammo image dataset preparation")
     parser.add_argument("--data_dir", type=str, required='./data')
     parser.add_argument("--out_dir", type=str, default='./data')
-    parser.add_argument("--img_size", type=int, default=256)
+    parser.add_argument("--img_size", type=int, default=224)
     parser.add_argument("--n_augment", type=int, default=0)
     parser.add_argument("--augment_type", type=str,
                         default='photometric',  choices=['geometric', 'photometric'])
-    parser.add_argument("--task", type=str, default='anomalies',
+    parser.add_argument("--task", type=str, default='birads',
                         choices=['anomalies', 'lesions', 'birads'])
 
     args = parser.parse_args()
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     os.makedirs(test_folder, exist_ok=True)
 
     class_list = ['no_finding', 'suspicious_calcification',
-                  'mass', 'suspicious_lymph_node']
+                  'mass']
 
     # # PREPARATION
     if args.task == 'anomalies':

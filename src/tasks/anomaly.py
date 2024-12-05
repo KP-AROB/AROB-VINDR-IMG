@@ -5,6 +5,8 @@ from tqdm import tqdm
 from src.utils.image import load_dicom_image
 from concurrent.futures import ProcessPoolExecutor
 from src.utils.dataframe import prepare_vindr_finding_dataframe
+from src.utils.image import crop_to_roi
+from src.utils.normalization import truncate_normalization
 
 
 def prepare_row(row, data_dir: str, out_dir: str, img_size: int):
@@ -12,8 +14,10 @@ def prepare_row(row, data_dir: str, out_dir: str, img_size: int):
         sample_path = os.path.join(
             data_dir, 'images', row['study_id'], row['image_id'] + '.dicom')
         original_image = load_dicom_image(sample_path)
+        cropped_image, cropped_roi = crop_to_roi(original_image)
+        normalized_image = truncate_normalization(cropped_image, cropped_roi)
         resized_image = cv2.resize(
-            original_image,
+            normalized_image,
             (img_size, img_size),
             interpolation=cv2.INTER_LINEAR,
         )
