@@ -4,7 +4,7 @@ import logging
 from tqdm import tqdm
 from src.utils.image import load_dicom_image
 from concurrent.futures import ProcessPoolExecutor
-from src.utils.dataframe import prepare_vindr_finding_dataframe
+from src.utils.dataframe import prepare_vindr_birads_dataframe
 
 
 def prepare_row(row, data_dir: str, out_dir: str, img_size: int):
@@ -18,26 +18,24 @@ def prepare_row(row, data_dir: str, out_dir: str, img_size: int):
             interpolation=cv2.INTER_LINEAR,
         )
         output_image_path = os.path.join(
-            out_dir, row['finding_categories'], "{}.png".format(row.name))
+            out_dir, row['breast_birads'], "{}.png".format(row.name))
         cv2.imwrite(output_image_path, resized_image)
     except Exception as e:
         img_id = row['image_id']
         logging.error(f'Failed to process image {img_id}: {e}')
 
 
-def prepare_lesion_dataset(data_dir: str, out_dir: str, img_size: int, class_list: list):
-    """Prepare the VINDR MAMMO dataset for lesion specific classification
-
+def prepare_birads_dataset(data_dir: str, out_dir: str, img_size: int):
+    """Prepare the VINDR MAMMO dataset for birads specific classification
     Args:
         data_dir (str): Path to original cbis dataset
         out_dir (str): Path to save the prepared cbis dataset
         img_size (int): New image size
-        class_list (list): List of the classes to keep
     """
-    train_df = prepare_vindr_finding_dataframe(data_dir, class_list, True)
-    test_df = prepare_vindr_finding_dataframe(data_dir, class_list, False)
+    train_df = prepare_vindr_birads_dataframe(data_dir, True)
+    test_df = prepare_vindr_birads_dataframe(data_dir, False)
 
-    for i in class_list:
+    for i in train_df['breast_birads'].unique():
         os.makedirs(os.path.join(out_dir, 'train', i), exist_ok=True)
         os.makedirs(os.path.join(out_dir, 'test', i), exist_ok=True)
 

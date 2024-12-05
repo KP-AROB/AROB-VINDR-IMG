@@ -4,7 +4,7 @@ import logging
 from tqdm import tqdm
 from src.utils.image import load_dicom_image
 from concurrent.futures import ProcessPoolExecutor
-from src.utils.dataframe import prepare_vindr_dataframe
+from src.utils.dataframe import prepare_vindr_finding_dataframe
 
 
 def prepare_row(row, data_dir: str, out_dir: str, img_size: int):
@@ -17,7 +17,7 @@ def prepare_row(row, data_dir: str, out_dir: str, img_size: int):
             (img_size, img_size),
             interpolation=cv2.INTER_LINEAR,
         )
-        new_class = 'normal' if row['finding_categories'] == 'no_finding' else 'abnormal'
+        new_class = '0_normal' if row['finding_categories'] == 'no_finding' else '1_abnormal'
         output_image_path = os.path.join(
             out_dir, new_class, "{}.png".format(row.name))
         cv2.imwrite(output_image_path, resized_image)
@@ -35,11 +35,11 @@ def prepare_anomaly_dataset(data_dir: str, out_dir: str, img_size: int, class_li
         img_size (int): New image size
         class_list (list): List of the classes to keep
     """
-    train_df = prepare_vindr_dataframe(data_dir, class_list, True)
-    test_df = prepare_vindr_dataframe(data_dir, class_list, False)
+    train_df = prepare_vindr_finding_dataframe(data_dir, class_list, True)
+    test_df = prepare_vindr_finding_dataframe(data_dir, class_list, False)
 
-    os.makedirs(os.path.join(out_dir, 'train', 'normal'), exist_ok=True)
-    os.makedirs(os.path.join(out_dir, 'test', 'abnormal'), exist_ok=True)
+    os.makedirs(os.path.join(out_dir, 'train', '0_normal'), exist_ok=True)
+    os.makedirs(os.path.join(out_dir, 'test', '1_abnormal'), exist_ok=True)
 
     train_out_dir = os.path.join(out_dir, 'train')
     test_out_dir = os.path.join(out_dir, 'test')

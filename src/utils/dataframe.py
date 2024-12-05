@@ -3,8 +3,12 @@ import os
 import ast
 
 
+def format_char(char):
+    return char.lower().replace(' ', '_')
+
+
 def format_category_list(category_list):
-    return [category.lower().replace(' ', '_') for category in category_list]
+    return [format_char(category) for category in category_list]
 
 
 def contains_all_classes(category_list, class_list):
@@ -23,7 +27,7 @@ def replace_categories(df, column, target_categories):
     return df
 
 
-def prepare_vindr_dataframe(data_dir, class_list, train: bool = True):
+def prepare_vindr_finding_dataframe(data_dir, class_list, train: bool = True):
     df_find = pd.read_csv(os.path.join(
         data_dir, 'finding_annotations.csv'))
     df_find['finding_categories'] = df_find['finding_categories'].apply(
@@ -33,6 +37,26 @@ def prepare_vindr_dataframe(data_dir, class_list, train: bool = True):
     df_find = df_find[df_find['finding_categories'].apply(
         lambda x: contains_all_classes(x, class_list))]
     df_find = replace_categories(df_find, 'finding_categories', class_list)
+    split_name = 'training' if train else 'test'
+    df_find = df_find[df_find['split'] == split_name]
+    return df_find
+
+
+def prepare_vindr_birads_dataframe(data_dir, train: bool = True):
+
+    df_find = pd.read_csv(os.path.join(
+        data_dir, 'finding_annotations.csv'))
+    df_find['breast_birads'] = df_find['breast_birads'].apply(format_char)
+
+    mapping = {
+        'bi-rads_1': 'bi-rads_1',
+        'bi-rads_2': 'bi-rads_2',
+        'bi-rads_3': 'bi-rads_0',
+        'bi-rads_4': 'bi-rads_0',
+        'bi-rads_5': 'bi-rads_0'
+    }
+
+    df_find['breast_birads'] = df_find['breast_birads'].replace(mapping)
     split_name = 'training' if train else 'test'
     df_find = df_find[df_find['split'] == split_name]
     return df_find

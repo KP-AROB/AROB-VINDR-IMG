@@ -3,6 +3,7 @@ import logging
 import os
 from src.tasks.lesion import prepare_lesion_dataset
 from src.tasks.anomaly import prepare_anomaly_dataset
+from src.tasks.birads import prepare_birads_dataset
 from src.utils.augmentation import make_classwise_augmentations
 
 if __name__ == "__main__":
@@ -15,7 +16,7 @@ if __name__ == "__main__":
     parser.add_argument("--augment_type", type=str,
                         default='photometric',  choices=['geometric', 'photometric'])
     parser.add_argument("--task", type=str, default='anomalies',
-                        choices=['anomalies', 'lesions'])
+                        choices=['anomalies', 'lesions', 'birads'])
 
     args = parser.parse_args()
     parser.set_defaults(synthetize=False)
@@ -40,12 +41,15 @@ if __name__ == "__main__":
                   'mass', 'suspicious_lymph_node']
 
     # # PREPARATION
-    # if args.task == 'anomalies':
-    #     prepare_anomaly_dataset(args.data_dir, out_dir,
-    #                             args.img_size, class_list)
-    # elif args.task == 'lesions':
-    #     prepare_lesion_dataset(args.data_dir, out_dir,
-    #                            args.img_size, class_list)
+    if args.task == 'anomalies':
+        prepare_anomaly_dataset(args.data_dir, out_dir,
+                                args.img_size, class_list)
+    elif args.task == 'lesions':
+        prepare_lesion_dataset(args.data_dir, out_dir,
+                               args.img_size, class_list)
+    elif args.task == 'birads':
+        prepare_birads_dataset(args.data_dir, out_dir,
+                               args.img_size)
 
     if args.n_augment > 0:
         make_classwise_augmentations(
