@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 from src.tasks.lesion import prepare_lesion_dataset
+from src.tasks.anomaly import prepare_anomaly_dataset
 from src.utils.augmentation import make_classwise_augmentations
 
 if __name__ == "__main__":
@@ -11,6 +12,8 @@ if __name__ == "__main__":
     parser.add_argument("--out_dir", type=str, default='./data')
     parser.add_argument("--img_size", type=int, default=256)
     parser.add_argument("--n_augment", type=int, default=0)
+    parser.add_argument("--task", type=str, default='anomalies',
+                        choices=['anomalies', 'lesions'])
 
     args = parser.parse_args()
     parser.set_defaults(synthetize=False)
@@ -31,11 +34,16 @@ if __name__ == "__main__":
     os.makedirs(train_folder, exist_ok=True)
     os.makedirs(test_folder, exist_ok=True)
 
-    class_list = ['no_finding', 'suspicious_calcification', 'mass']
+    class_list = ['no_finding', 'suspicious_calcification',
+                  'mass', 'suspicious_lymph_node']
 
     # PREPARATION
-
-    prepare_lesion_dataset(args.data_dir, out_dir, args.img_size, class_list)
+    if args.task == 'anomalies':
+        prepare_anomaly_dataset(args.data_dir, out_dir,
+                                args.img_size, class_list)
+    elif args.task == 'lesions':
+        prepare_lesion_dataset(args.data_dir, out_dir,
+                               args.img_size, class_list)
 
     if args.n_augment > 0:
         make_classwise_augmentations(
