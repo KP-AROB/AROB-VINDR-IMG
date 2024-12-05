@@ -15,18 +15,22 @@ def augment_image(image_path, n_augment, pipeline):
     return augmented_images
 
 
-def make_classwise_augmentations(data_dir, n_augment, class_list=['mass', 'suspicious_calcification']):
+def make_classwise_augmentations(data_dir, n_augment, class_list=['mass', 'suspicious_calcification'], type='photometric'):
     logging.info("Running data augmentation")
 
-    augmentation_pipeline = A.Compose([
+    geometric_pipeline = A.Compose([
         A.HorizontalFlip(p=0.5),
         A.VerticalFlip(p=0.5),
-        A.Rotate(limit=45, border_mode=cv2.BORDER_CONSTANT, p=0.3),
-        A.ElasticTransform(alpha=1, sigma=50, p=0.3),
-        A.RandomBrightnessContrast(
-            brightness_limit=0.2, contrast_limit=0.2, p=0.5),
-        A.GaussianBlur(blur_limit=(3, 7), p=0.3),
+        A.Rotate(limit=90, border_mode=cv2.BORDER_CONSTANT, p=0.5),
     ])
+
+    photometric_pipeline = A.Compose([
+        A.RandomBrightnessContrast(
+            brightness_limit=0.2, contrast_limit=0.2, p=1),
+        A.GaussianBlur(blur_limit=(3, 7), p=1),
+    ])
+
+    augmentation_pipeline = geometric_pipeline if type == 'geometric' else photometric_pipeline
 
     class_dirs = [os.path.join(data_dir, i) for i in class_list]
     for cls_path in class_dirs:

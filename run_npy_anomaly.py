@@ -18,10 +18,10 @@ test_label_files = glob(test_folder + '/*labels*.npy')
 classes = ['no_finding', 'suspicious_calcification',
            'mass']
 
-os.makedirs(os.path.join(out_folder, 'train', 'normal'), exist_ok=True)
-os.makedirs(os.path.join(out_folder, 'train', 'abnormal'), exist_ok=True)
-os.makedirs(os.path.join(out_folder, 'test', 'normal'), exist_ok=True)
-os.makedirs(os.path.join(out_folder, 'test', 'abnormal'), exist_ok=True)
+os.makedirs(os.path.join(out_folder, 'train', '0_normal'), exist_ok=True)
+os.makedirs(os.path.join(out_folder, 'train', '1_abnormal'), exist_ok=True)
+os.makedirs(os.path.join(out_folder, 'test', '0_normal'), exist_ok=True)
+os.makedirs(os.path.join(out_folder, 'test', '1_abnormal'), exist_ok=True)
 
 with tqdm(total=len(train_image_files), desc='Saving training images') as pbar_outer:
     for idx, (image_file, label_file) in enumerate(zip(train_image_files, train_label_files)):
@@ -32,7 +32,7 @@ with tqdm(total=len(train_image_files), desc='Saving training images') as pbar_o
                 img = cv2.normalize(img, None, 0, 255,
                                     cv2.NORM_MINMAX).astype('uint8')
 
-                new_class = 'normal' if classes[label] == 'no_finding' else 'abnormal'
+                new_class = '0_normal' if classes[label] == 'no_finding' else '1_abnormal'
 
                 cv2.imwrite(os.path.join(
                     out_folder, 'train', new_class, f'{idx}_{jdx}.png'), img[0])
@@ -49,7 +49,7 @@ with tqdm(total=len(test_image_files), desc='Saving test images') as pbar_outer:
                 img = cv2.normalize(img, None, 0, 255,
                                     cv2.NORM_MINMAX).astype('uint8')
 
-                new_class = 'normal' if classes[label] == 'no_finding' else 'abnormal'
+                new_class = '0_normal' if classes[label] == 'no_finding' else '1_abnormal'
                 cv2.imwrite(os.path.join(
                     out_folder, 'test', new_class, f'{idx}_{jdx}.png'), img[0])
                 pbar_inner.update(1)

@@ -12,6 +12,8 @@ if __name__ == "__main__":
     parser.add_argument("--out_dir", type=str, default='./data')
     parser.add_argument("--img_size", type=int, default=256)
     parser.add_argument("--n_augment", type=int, default=0)
+    parser.add_argument("--augment_type", type=str,
+                        default='photometric',  choices=['geometric', 'photometric'])
     parser.add_argument("--task", type=str, default='anomalies',
                         choices=['anomalies', 'lesions'])
 
@@ -37,14 +39,14 @@ if __name__ == "__main__":
     class_list = ['no_finding', 'suspicious_calcification',
                   'mass', 'suspicious_lymph_node']
 
-    # PREPARATION
-    if args.task == 'anomalies':
-        prepare_anomaly_dataset(args.data_dir, out_dir,
-                                args.img_size, class_list)
-    elif args.task == 'lesions':
-        prepare_lesion_dataset(args.data_dir, out_dir,
-                               args.img_size, class_list)
+    # # PREPARATION
+    # if args.task == 'anomalies':
+    #     prepare_anomaly_dataset(args.data_dir, out_dir,
+    #                             args.img_size, class_list)
+    # elif args.task == 'lesions':
+    #     prepare_lesion_dataset(args.data_dir, out_dir,
+    #                            args.img_size, class_list)
 
     if args.n_augment > 0:
         make_classwise_augmentations(
-            train_folder, args.n_augment, class_list[1:])
+            train_folder, args.n_augment, class_list[1:], args.augment_type)
