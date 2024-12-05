@@ -9,7 +9,7 @@ from src.utils.augmentation import make_classwise_augmentations
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Vindr Mammo image dataset preparation")
-    parser.add_argument("--data_dir", type=str, required='./data')
+    parser.add_argument("--data_dir", type=str, default='./data')
     parser.add_argument("--out_dir", type=str, default='./data')
     parser.add_argument("--img_size", type=int, default=224)
     parser.add_argument("--n_augment", type=int, default=0)
