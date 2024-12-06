@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import shutil
 from src.tasks.lesion import prepare_lesion_dataset
 from src.tasks.anomaly import prepare_anomaly_dataset
 from src.tasks.birads import prepare_birads_dataset
@@ -30,7 +31,12 @@ if __name__ == "__main__":
     )
     logging.info('Running Vindr Mammo image dataset preparation')
 
-    out_dir = os.path.join(args.out_dir)
+    data_dir = args.data_dir
+    out_dir = args.out_dir
+
+    if out_dir != args.data_dir:
+        shutil.rmtree(out_dir)
+
     train_folder = os.path.join(out_dir, 'train')
     test_folder = os.path.join(out_dir, 'test')
 
@@ -42,13 +48,13 @@ if __name__ == "__main__":
 
     # # PREPARATION
     if args.task == 'anomalies':
-        prepare_anomaly_dataset(args.data_dir, out_dir,
+        prepare_anomaly_dataset(data_dir, out_dir,
                                 args.img_size, class_list)
     elif args.task == 'lesions':
-        prepare_lesion_dataset(args.data_dir, out_dir,
+        prepare_lesion_dataset(data_dir, out_dir,
                                args.img_size, class_list)
     elif args.task == 'birads':
-        prepare_birads_dataset(args.data_dir, out_dir,
+        prepare_birads_dataset(data_dir, out_dir,
                                args.img_size)
 
     if args.n_augment > 0:

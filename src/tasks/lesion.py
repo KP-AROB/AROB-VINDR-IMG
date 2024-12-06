@@ -2,28 +2,19 @@ import os
 import cv2
 import logging
 from tqdm import tqdm
-from src.utils.image import load_dicom_image
+from src.utils.image import get_final_image
 from concurrent.futures import ProcessPoolExecutor
 from src.utils.dataframe import prepare_vindr_finding_dataframe
-from src.utils.image import crop_to_roi
-from src.utils.normalization import truncate_normalization
 
 
 def prepare_row(row, data_dir: str, out_dir: str, img_size: int):
     try:
         sample_path = os.path.join(
             data_dir, 'images', row['study_id'], row['image_id'] + '.dicom')
-        original_image = load_dicom_image(sample_path)
-        cropped_image, cropped_roi = crop_to_roi(original_image)
-        normalized_image = truncate_normalization(cropped_image, cropped_roi)
-        resized_image = cv2.resize(
-            normalized_image,
-            (img_size, img_size),
-            interpolation=cv2.INTER_LINEAR,
-        )
+        image = get_final_image(sample_path, img_size)
         output_image_path = os.path.join(
             out_dir, row['finding_categories'], "{}.png".format(row.name))
-        cv2.imwrite(output_image_path, resized_image)
+        cv2.imwrite(output_image_path, image)
     except Exception as e:
         img_id = row['image_id']
         logging.error(f'Failed to process image {img_id}: {e}')

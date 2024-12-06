@@ -2,7 +2,7 @@ from pydicom import dcmread
 from pydicom.pixels import apply_voi_lut
 import numpy as np
 import cv2
-
+from src.utils.normalization import truncate_normalization
 
 def crop_to_roi(img: np.array):
     """Crop mammogram to breast region
@@ -41,6 +41,15 @@ def load_dicom_image(path: str):
 
     if ds.PhotometricInterpretation == "MONOCHROME1":
         img2d = np.amax(img2d) - img2d
+    return cv2.normalize(img2d, None, 0, 255, cv2.NORM_MINMAX).astype('uint8')
 
-    img2d = cv2.normalize(img2d, None, 0, 255, cv2.NORM_MINMAX).astype('uint8')
-    return img2d
+def get_final_image(path: str, img_size: int):
+    original_image = load_dicom_image(path)
+    cropped_image, cropped_roi = crop_to_roi(original_image)
+    normalized_image = truncate_normalization(cropped_image, cropped_roi)
+    resized_image = cv2.resize(
+        normalized_image,
+        (img_size, img_size),
+        interpolation=cv2.INTER_LINEAR,
+    )
+    return cv2.normalize(resized_image, None, 0, 255, cv2.NORM_MINMAX).astype('uint8')

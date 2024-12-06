@@ -15,6 +15,9 @@ def truncate_normalization(img: np.array, mask: np.array):
     Pmin = np.percentile(img[mask != 0], 2)
     Pmax = np.percentile(img[mask != 0], 99)
     truncated = np.clip(img, Pmin, Pmax)
-    normalized = (truncated - Pmin) / (Pmax - Pmin)
+    if Pmax != Pmin:
+        normalized = (truncated - Pmin) / (Pmax - Pmin)
+    else:
+        normalized = np.zeros_like(truncated)
     normalized[mask == 0] = 0
-    return cv2.normalize(normalized, None, 0, 255, cv2.NORM_MINMAX).astype('uint8')
+    return normalized

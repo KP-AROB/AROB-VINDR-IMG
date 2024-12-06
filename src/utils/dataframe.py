@@ -37,6 +37,7 @@ def prepare_vindr_finding_dataframe(data_dir, class_list, train: bool = True):
     df_find = df_find[df_find['finding_categories'].apply(
         lambda x: contains_all_classes(x, class_list))]
     df_find = replace_categories(df_find, 'finding_categories', class_list)
+    df_find.drop_duplicates(subset='image_id', keep=False, inplace=True)
     split_name = 'training' if train else 'test'
     df_find = df_find[df_find['split'] == split_name]
     return df_find
